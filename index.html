@@ -94,15 +94,41 @@ td.ip,.ip{font-family:var(--mono)}
 tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) * 60ms + 350ms)}
 .slide:not(.on) tbody tr{opacity:0;transform:translateX(-10px)}
 .scroll{overflow-x:auto}
-#custos .grid{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:40px}
-#custos td{padding:7px 12px;font-size:17px}#custos th{padding:0 12px 9px}
-#custos td.n,#custos th.n{text-align:right;font-family:var(--mono);white-space:nowrap}
-#custos tfoot td{font-weight:600;border-bottom:0;padding-top:12px;font-size:19px}
-#custos .tot{font:400 64px/1 var(--serif);letter-spacing:-.02em;margin:6px 0 4px}
-#custos .card h3{font:600 15px var(--sans);color:var(--ink3);margin-bottom:4px}
-#custos .card p{font-size:16px;color:var(--ink2)}
-#custos .card li{font-size:17px;padding:9px 0}#custos .card li b{float:right;font-family:var(--mono);font-weight:500}
-#custos .src{font-size:13px;color:var(--ink3);margin-top:10px;line-height:1.45}
+#custos .grid{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:44px}
+#custos .chart{position:relative;padding-top:24px}
+#custos .cols{display:flex;gap:10px;align-items:flex-end;height:330px;border-bottom:1px solid var(--line2)}
+#custos .col{flex:1;display:flex;justify-content:center;align-items:flex-end;height:100%}
+#custos .bar{display:block;width:62px;height:0;border-radius:6px 6px 0 0;background:linear-gradient(#9cbcff,#5f8fe8);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+#custos .col.x .bar{background:linear-gradient(#ffd98a,#e0a64a)}
+#custos .col.i .bar{background:linear-gradient(#c9cbcf,#8c9096)}
+#custos .labs{display:flex;gap:10px;margin-top:10px}
+#custos .lab{flex:1;text-align:center;transition:opacity .4s}
+#custos .lab b{display:block;font:600 14px/1.2 var(--sans)}
+#custos .lab span{display:block;font:500 14px var(--mono);color:var(--ink);margin:3px 0 2px}
+#custos .lab small{display:block;font-size:12px;line-height:1.3;color:var(--ink3)}
+#custos .lab.off{opacity:.3}
+#custos .lab.off span{font-size:0}#custos .lab.off span::after{content:"fora";font-size:14px}
+#custos .ctabs{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:10px;padding:4px;margin-bottom:16px}
+#custos .ctabs button{flex:1;border:0;background:none;color:var(--ink2);font:500 15px var(--sans);padding:9px 8px;border-radius:7px;cursor:pointer;transition:background .25s,color .25s}
+#custos .ctabs button[aria-selected=true]{background:var(--acc);color:#0b0c0e}
+#custos .card h3{font:600 15px var(--sans);color:var(--ink3);margin-bottom:2px}
+#custos .tot{font:400 60px/1.05 var(--serif);letter-spacing:-.02em;margin:2px 0 4px;font-variant-numeric:tabular-nums}
+#custos .card p{font-size:15px;color:var(--ink2)}
+#custos .card ul{margin-top:8px}
+#custos .card li{font-size:16px;padding:8px 0;animation:liin .4s ease both}#custos .card li b{float:right;font-family:var(--mono);font-weight:500}
+@keyframes liin{from{opacity:0;transform:translateX(8px)}}
+#custos .src{font-size:12.5px;color:var(--ink3);margin-top:10px;line-height:1.45}
+.lever{position:absolute;left:0;top:0;width:34px;height:52px;pointer-events:auto;cursor:pointer;border:0;background:none;padding:0;transition:opacity .4s}
+.lever::before{content:"";position:absolute;left:3px;right:3px;bottom:0;height:16px;border-radius:3px 3px 1px 1px;background:linear-gradient(#4b5059,#30343b);border:1.5px solid #151619}
+.lever i{position:absolute;left:15px;bottom:12px;width:4px;height:36px;background:#c5c9cf;border-radius:2px;transform-origin:50% 100%;transform:rotate(-38deg);transition:transform .35s cubic-bezier(.5,1.6,.5,1)}
+.lever i::after{content:"";position:absolute;left:-5px;top:-8px;width:14px;height:14px;border-radius:50%;background:#e0524a;box-shadow:inset -2px -2px 0 rgba(0,0,0,.25)}
+.lever.on i{transform:rotate(38deg)}
+.lever i::before{content:"";position:absolute;left:-3px;bottom:-4px;width:10px;height:6px;border-radius:2px;background:#1b1d21}
+.stack #custos .grid{grid-template-columns:minmax(0,1fr)!important}
+.stack #custos .bar{width:70%}
+.stack #custos .lab small{display:none}
+.stack #custos .card li b{float:none;display:block}
+.stack #custos .cols,.stack #custos .labs{gap:3px}.stack #custos .cols{height:200px}.stack #custos .lab{min-width:0}.stack #custos .lab b{font-size:10px;overflow-wrap:anywhere}.stack #custos .lab span{font-size:10px}.stack #custos .lab.off span{font-size:0}.stack #custos .lab.off span::after{font-size:10px}.stack #custos .chart{padding-top:0}
 
 .ok{color:var(--ok)}
 .tag{display:inline-block;align-self:flex-start;font:500 14px var(--sans);padding:3px 10px;border-radius:99px;border:1px solid currentColor}
@@ -707,25 +733,23 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
     <p class="kick" data-a>Orçamento estimado</p>
     <h2 data-a>Quanto custa montar a rede de verdade</h2>
     <div class="grid">
-      <div class="scroll" data-a><table>
-        <thead><tr><th>Item</th><th class="n">Qtd.</th><th class="n">Unit. (R$)</th><th class="n">Total (R$)</th></tr></thead>
-        <tbody><tr><td>Roteadores Cisco 2911 (recertificados)</td><td class="n">2</td><td class="n">580</td><td class="n">1.160</td></tr><tr><td>Switches Cisco Catalyst 2960-X (seminovos)</td><td class="n">3</td><td class="n">1.400</td><td class="n">4.200</td></tr><tr><td>Servidores torre Dell PowerEdge (7 serviços virtualizados)</td><td class="n">2</td><td class="n">10.000</td><td class="n">20.000</td></tr><tr><td>Estações Dell OptiPlex i5, 16 GB (seminovas)</td><td class="n">6</td><td class="n">3.400</td><td class="n">20.400</td></tr><tr><td>Access point Ubiquiti UniFi U6+ (Wi-Fi 6)</td><td class="n">1</td><td class="n">925</td><td class="n">925</td></tr><tr><td>Câmera IP Intelbras VIP 1230 (PoE)</td><td class="n">1</td><td class="n">380</td><td class="n">380</td></tr><tr><td>Cabo Cat6 Furukawa 305 m + conectores e patch cords</td><td class="n">2</td><td class="n">1.500</td><td class="n">3.000</td></tr><tr><td>Mini rack de parede 12U (Matriz e Filial)</td><td class="n">2</td><td class="n">800</td><td class="n">1.600</td></tr><tr><td>Nobreak senoidal 1200 VA rack</td><td class="n">2</td><td class="n">2.100</td><td class="n">4.200</td></tr><tr><td>Instalação e certificação (10%)</td><td class="n">1</td><td class="n">5.586</td><td class="n">5.586</td></tr></tbody>
-        <tfoot><tr><td>Investimento inicial (CAPEX)</td><td></td><td></td><td class="n">61.451</td></tr></tfoot>
-      </table></div>
+      <div class="chart" data-a>
+        <div class="cols" id="cCols"></div>
+        <div class="labs" id="cLabs"></div>
+      </div>
       <div class="card" id="custoCard" data-a>
-        <h3>Total para montar Matriz e Filial</h3>
-        <div class="tot">R$ 61 mil</div>
-        <p>Cenário enxuto: equipamentos Cisco seminovos, iguais aos do Packet Tracer.</p>
-        <ul class="rows">
-          <li>Internet empresarial, 2 sites <b>~R$ 400/mês</b></li>
-          <li>Backup 4G/5G da WAN <b>~R$ 100/mês</b></li>
-          <li>Link dedicado Matriz–Filial <b>sob cotação</b></li>
-          <li>Switches Cisco novos (2960L) <b>R$ 125 mil</b></li>
-        </ul>
-        <p class="src">Preços pesquisados em nov/2026 (Net Computadores, KaBuM!, Magalu, OLX, Dell). Servidores, instalação e mensalidades são estimativas; valores variam com fornecedor e frete.</p>
+        <div class="ctabs" role="tablist" aria-label="Cenário do orçamento">
+          <button role="tab" data-t="rede" aria-selected="true">Só a rede</button>
+          <button role="tab" data-t="full" aria-selected="false">Estrutura completa</button>
+        </div>
+        <h3 id="cH">Investimento inicial, só a rede</h3>
+        <div class="tot">R$ <span id="cTot">0</span></div>
+        <p id="cSub"></p>
+        <ul class="rows" id="cMes"></ul>
+        <p class="src">Preços pesquisados em nov/2026 (Net Computadores, KaBuM!, Magalu, OLX, Dell, Microsoft). Servidores, instalação e mensalidades são estimativas.</p>
       </div>
     </div>
-    <aside class="note">Fizemos um levantamento de quanto custaria montar essa rede no mundo real. Com equipamentos Cisco seminovos, os mesmos modelos do Packet Tracer, o investimento fica em torno de 61 mil reais. Os maiores custos são os dois servidores, que rodam os sete serviços virtualizados, e as seis estações. Se a empresa preferir switches Cisco novos, o total passa de 125 mil. Por mês, entram a internet dos dois sites, o backup 4G e o link dedicado entre Matriz e Filial, que as operadoras passam sob cotação.</aside>
+    <aside class="note">Fizemos um levantamento de quanto custaria montar essa rede no mundo real, em dois cenários. Só a rede, com equipamentos Cisco seminovos iguais aos do Packet Tracer, sai por volta de 61 mil reais; os maiores custos são os dois servidores e as seis estações. A estrutura completa soma o que a empresa precisa para operar de verdade: licenças do Windows Server, um firewall em cada site e os discos para gravar as câmeras, e chega a cerca de 76 mil. Por mês entram a internet, o backup 4G, o Microsoft 365 e o link dedicado, que as operadoras passam sob cotação.</aside>
   </section>
 
   <section class="slide" id="riscos" data-sec="Fechamento" aria-label="Segurança e continuidade">
@@ -1122,7 +1146,6 @@ const SPEC = {
   pacote: {desk: [], peek: []},
   plano: {desk: ['r', 'l'], peek: []},
   testes: {desk: [], peek: ['#galShot', '#testes .shot']},
-  custos: {desk: [], peek: ['#custoCard']},
   riscos: {desk: [], peek: []},
   conclusao: {desk: [], peek: ['#conclusao .next']},
   referencias: {desk: ['r'], peek: []},
@@ -1348,7 +1371,142 @@ async function celebrate() {
   sp.forEach((e, i) => { let q = 0; const t = setInterval(() => frame(e, q++ % 2 ? FR.wave1 : FR.wave0, TS), 240 + i * 30); run.timers.push(t); });
   for (;;) { await wait(5200); burst(cv, cx + (Math.random() - .5) * 700, 480, 110); await say(cx + (Math.random() - .5) * 300, hb.y - 14, pick(['Valeu, professora!', 'Etapa 2 feita!', 'Perguntas?', 'Rede no ar!']), 1500); }
 }
+
+/* slide de custos: gráfico que cresce conforme alguém digita os itens */
+const COST = (() => {
+  const D = [
+    {n: 'Servidores', s: '2× Dell PowerEdge', v: 20000, t: '2x servidor Dell PowerEdge'},
+    {n: 'Estações', s: '6× OptiPlex i5', v: 20400, t: '6x Dell OptiPlex i5 16GB'},
+    {n: 'Rede', s: '2911, 2960-X, AP, cabos, racks', v: 15085, t: '2x 2911 + 3x 2960-X + AP + cabos'},
+    {n: 'Câmera IoT', s: 'Intelbras VIP 1230', v: 380, t: '1x câmera IP Intelbras'},
+    {n: 'Licenças', s: '2× Windows Server 2025', v: 5520, t: '2x Windows Server 2025', x: 1},
+    {n: 'Firewall', s: '2× FortiGate 40F', v: 4852, t: '2x FortiGate 40F', x: 1},
+    {n: 'Gravação', s: '2× HD WD Purple 4 TB', v: 3000, t: '2x HD WD Purple 4TB', x: 1},
+    {n: 'Instalação', s: '10% dos equipamentos', v: 0, t: 'instalação 10%', i: 1},
+  ];
+  const INST = {rede: 5586, full: 6924}, KK = () => ($('#cCols').clientHeight || 330) * .85 / 20400, BASE = [0, 1, 2, 3], EXTRA = [4, 5, 6];
+  const MES = {
+    rede: [['Internet empresarial, 2 sites', '~R$ 400/mês'], ['Backup 4G/5G da WAN', '~R$ 100/mês'], ['Link dedicado Matriz–Filial', 'sob cotação'], ['Com switches Cisco novos', 'R$ 125 mil']],
+    full: [['Internet, 2 sites + backup 4G', '~R$ 500/mês'], ['Microsoft 365, 6 usuários', '~R$ 200/mês'], ['Link dedicado Matriz–Filial', 'sob cotação'], ['Sistemas ERP, WMS e TMS', 'sob cotação'], ['Com switches Cisco novos', 'R$ 140 mil']],
+  };
+  const SUB = {rede: 'Equipamentos Cisco seminovos, iguais aos do Packet Tracer.', full: 'A rede mais licenças, firewall e gravação: pronta para operar.'};
+  const fmt = n => Math.round(n).toLocaleString('pt-BR');
+  $('#cCols').innerHTML = D.map(d => `<div class="col${d.x ? ' x' : ''}${d.i ? ' i' : ''}"><i class="bar"></i></div>`).join('');
+  $('#cLabs').innerHTML = D.map(d => `<div class="lab"><b>${d.n}</b><span>0</span><small>${d.s}</small></div>`).join('');
+  const bars = $$('#cCols .bar'), labs = $$('#cLabs .lab'), tot = $('#cTot');
+  const c = {tab: 'rede', cur: D.map(() => 0), q: Promise.resolve(), D, bars};
+  c.target = (i, t = c.tab) => D[i].i ? INST[t] : D[i].x && t === 'rede' ? 0 : D[i].v;
+  c.paint = i => {
+    bars[i].style.height = c.cur[i] * KK() + 'px';
+    $('span', labs[i]).textContent = fmt(c.cur[i]);
+    labs[i].classList.toggle('off', !!D[i].x && c.tab === 'rede' && c.cur[i] < 1);
+    tot.textContent = fmt(c.cur.reduce((a, b) => a + b, 0));
+  };
+  c.reset = () => { c.cur = D.map(() => 0); D.forEach((_, i) => c.paint(i)); };
+  c.ui = () => {
+    $$('#custos .ctabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === c.tab));
+    $('#cH').textContent = c.tab === 'rede' ? 'Investimento inicial, só a rede' : 'Investimento inicial, estrutura completa';
+    $('#cSub').textContent = SUB[c.tab];
+    $('#cMes').innerHTML = MES[c.tab].map(([a, b], k) => `<li style="animation-delay:${k * .08}s">${a} <b>${b}</b></li>`).join('');
+    D.forEach((_, i) => c.paint(i));
+  };
+  /* anima a coluna i até "to"; onStep recebe a altura atual em px */
+  c.grow = (i, to, ms = 900, onStep) => new Promise(res => {
+    const from = c.cur[i], t0 = performance.now();
+    const f = now => {
+      const k = Math.min(1, (now - t0) / ms), e = 1 - (1 - k) ** 3;
+      c.cur[i] = from + (to - from) * e; c.paint(i); if (onStep) onStep(c.cur[i] * KK());
+      k < 1 ? requestAnimationFrame(f) : res();
+    };
+    requestAnimationFrame(f);
+  });
+  c.direct = () => Promise.all(D.map((_, i) => c.grow(i, c.target(i), 900 + i * 90)));
+  c.lines = t => (t === 'full' ? BASE.concat(EXTRA, [7]) : BASE.concat([7]));
+  c.set = t => {
+    if (t === c.tab) return;
+    c.tab = t; c.ui();
+    const tok = run;
+    c.q = c.q.then(() => (tok && tok === run && run.cost && !run.dead) ? run.cost.toggle(t) : c.direct()).catch(() => {});
+  };
+  $$('#custos .ctabs button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); c.set(b.dataset.t); }));
+  c.ui();
+  c.fmt = fmt; c.K = KK;
+  return c;
+})();
 const CAMEOS = {
+  async custos() {
+    const tok = run, C = COST, ppl = ['caio', 'gn', 'gc', 'heitor'].sort(() => Math.random() - .5);
+    C.reset(); C.q = Promise.resolve();
+    const alive = () => tok === run && !tok.dead;
+    const colPos = i => { const b = box(C.bars[i]); return {x: b.x + b.w / 2, y: b.y + b.h}; };
+    /* quem pilota o teclado */
+    const ty = actor(ppl[0], crewF).show(0);
+    ty.at(30, GY - ty.h).f(FR.side); await wait(500); ty.show(1);
+    await walkTo(ty, 120, 70); if (!alive()) return;
+    await laptopOut(ty);
+    const bub = document.createElement('div'); bub.className = 'bub';
+    bub.style.cssText = `bottom:auto;left:${ty.x + ty.w / 2 - 20}px;top:${ty.y - 12}px;transform:translateY(-100%);min-width:330px;opacity:0;transition:opacity .3s`;
+    crewF.append(bub); run.clips.push(bub);
+    /* quem sobe junto com as colunas */
+    const rd = actor(ppl[1], crewF, 2.2).show(0);
+    /* quem puxa a alavanca */
+    const lev = document.createElement('button'); lev.className = 'lever'; lev.type = 'button';
+    lev.setAttribute('aria-label', 'Alternar entre só a rede e estrutura completa'); lev.innerHTML = '<i></i>';
+    lev.style.transform = `translate(1400px,${GY - 52}px)`; lev.classList.toggle('on', C.tab === 'full');
+    lev.addEventListener('click', e => { e.stopPropagation(); C.set(C.tab === 'full' ? 'rede' : 'full'); });
+    crewF.append(lev); run.clips.push(lev);
+    const lv = actor(ppl[2], crewF).show(0);
+    lv.at(1446, GY - lv.h).f(FR.idle).flip(true); await wait(40); lv.show(1);
+    let tap = null, shown = [];
+    const typing = on => { clearInterval(tap); if (on) { let k = 0; tap = setInterval(() => ty.f((k ^= 1) ? FR.type1 : FR.type0), 150); run.timers.push(tap); } else ty.f(FR.type0); };
+    const typeLine = async ln => {
+      bub.style.opacity = 1; typing(true);
+      for (let i = 0; i <= ln.length; i++) {
+        if (!alive()) return;
+        bub.innerHTML = shown.slice(-2).map(l => `<i>${esc(l)}</i>`).concat(`<b>orçamento&gt; </b>${esc(ln.slice(0, i))}<span class="cur"></span>`).join('\n');
+        await wait(30 + Math.random() * 30);
+      }
+      typing(false); shown.push(ln);
+    };
+    let onCol = -1;
+    const ride = async (i, to) => {
+      const p = colPos(i), h0 = C.cur[i] * C.K();
+      if (onCol < 0) { rd.at(p.x - rd.w / 2, p.y - h0 - rd.h).f(FR.idle); await wait(30); rd.show(1); }
+      else if (onCol !== i) { rd.f(FR.side).flip(p.x < rd.x); await glide(rd, p.x - rd.w / 2, p.y - h0 - rd.h, 420); }
+      onCol = i; if (!alive()) return;
+      rd.flip(false).f(FR.crouch);
+      await C.grow(i, to, 1000, h => rd.at(p.x - rd.w / 2, p.y - h - rd.h));
+      rd.f(to > h0 / C.K() ? FR.wave0 : FR.idle); await wait(260); rd.f(FR.idle);
+    };
+    const sign = (i, to) => (to >= C.cur[i] ? '+ ' : '- ');
+    const runLines = async (ids, t) => {
+      for (const i of ids) {
+        if (!alive()) return;
+        const to = C.target(i, t), d = C.D[i];
+        if (Math.abs(to - C.cur[i]) < 1) continue;
+        await typeLine(`${d.i ? '~ ' : sign(i, to)}${d.t}  ${C.fmt(Math.abs(d.i ? to : (to || d.v)))}`);
+        await ride(i, to); await wait(180);
+      }
+      if (!alive()) return;
+      await typeLine(`= total R$ ${C.fmt(C.D.reduce((a, _, i) => a + C.target(i, t), 0))}`);
+      say(ty.x + ty.w / 2, ty.y - 4 - bub.offsetHeight - 8, pick(['Fechado!', 'Conta batida!', 'Orçamento pronto!']), 1600);
+    };
+    run.cost = {
+      async toggle(t) {
+        if (!alive()) return;
+        /* alavanca: baixa para a estrutura completa, sobe para só a rede */
+        lv.f(FR.point).flip(true); await wait(220);
+        lev.classList.toggle('on', t === 'full'); lv.f(t === 'full' ? FR.crouch : FR.wave0); await wait(380);
+        lv.f(FR.idle);
+        say(lv.x + lv.w / 2, lv.y - 8, t === 'full' ? 'Estrutura completa!' : 'Só a rede!', 1500);
+        await wait(300);
+        await runLines(t === 'full' ? [4, 5, 6, 7] : [6, 5, 4, 7], t);
+      },
+    };
+    C.q = wait(300).then(() => runLines(C.lines(C.tab), C.tab)).catch(() => {});
+    await C.q;
+    while (alive()) { await idle(lv, 2400); if (!alive()) return; lv.flip(true).f(FR.lookL); await wait(900); }
+  },
   async capa() {
     await wait(1000);
     const g = box($('#capa .scene')), k = g.w / 680, gy = g.y + 520 * k;
@@ -1380,7 +1538,7 @@ const CAMEOS = {
 function crew(i) {
   if (run) { run.dead = true; run.timers.forEach(t => { clearTimeout(t); clearInterval(t); }); run.actors.forEach(a => a.wrap.remove()); run.clips.forEach(c => c.remove()); run.anims.forEach(a => { try { a.cancel(); } catch (e) {} }); run.restores.forEach(f => f()); }
   run = {dead: false, timers: [], actors: [], clips: [], anims: [], restores: []};
-  if (stack || reduce) return;
+  if (stack || reduce) { if (stack) COST.direct(); return; }
   const id = slides[i].id;
   if (CAMEOS[id]) { CAMEOS[id]().catch(() => {}); return; }
   (plan(id) || []).forEach(f => f().catch(() => {}));
@@ -1453,6 +1611,7 @@ addEventListener('keydown', e => {
   else if (k === 'f' || k === 'F') full();
   else if (k === 'n' || k === 'N') toggleNotes();
   else if (k === 'p' || k === 'P') toggleCrew();
+  else if ((k === 't' || k === 'T') && slides[cur].id === 'custos') COST.set(COST.tab === 'full' ? 'rede' : 'full');
   else return;
   hint.classList.add('gone');
 });
