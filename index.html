@@ -36,6 +36,7 @@ img{max-width:100%;display:block}
 .prop{position:absolute;left:0;top:0;pointer-events:none}
 .prop.bottle{width:14px;height:40px;border-radius:5px 5px 4px 4px;background:linear-gradient(90deg,#1f5c3a,#2f8a57 45%,#1a4a2f);border:1px solid #0c2617}
 .prop.bottle::before{content:"";position:absolute;left:3px;top:-10px;width:6px;height:12px;background:#d8b04a;border-radius:2px 2px 0 0}
+.prop.ladder{width:36px;border-left:4px solid #b9a27c;border-right:4px solid #b9a27c;background:repeating-linear-gradient(transparent 0 11px,#cdb68e 11px 15px);transform-origin:50% 100%}
 .prop.cork{width:7px;height:8px;border-radius:2px;background:#e3c99a}
 #fx{position:absolute;inset:0;pointer-events:none}
 
@@ -918,7 +919,7 @@ function walkTo(a, x, speed = 34) {
     const step = now => {
       if (tok.dead) return;
       const dt = Math.min(64, now - last); last = now; acc += dt;
-      if (acc > 105) { acc = 0; k = (k + 1) % 4; }
+      if (acc > 125) { acc = 0; k = (k + 1) % 4; }
       a.f(WALK[k]);
       const nx = a.x + dir * speed * dt / 1000;
       if ((dir > 0 && nx >= x) || (dir < 0 && nx <= x)) { a.at(x, a.y).f(FR.side); return res(); }
@@ -1096,22 +1097,73 @@ const SAYS = {
 };
 const vis = el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
 /* a piece of the sheet comes loose and someone puts it back */
+/* is the floor under this point of an element free (no other content, no desk)? */
+function clearUnder(el, cx) {
+  const sr = stage.getBoundingClientRect(), b = box(el);
+  if ($$('.deskc', crewF).some(d => Math.abs(parseFloat(d.style.left) + 62 - cx) < 150)) return false;
+  for (let y = b.y + b.h + 30; y < GY - 20; y += 30) {
+    const hits = document.elementsFromPoint(sr.left + cx * scale, sr.top + y * scale);
+    if (hits.some(h => h.closest && h.closest('.card,.shot,.code,table,figure,.vbar,.steps3,.srv,.hop3,.why,.trio,ul,.foot') && !el.contains(h) && !h.contains(el))) return false;
+  }
+  return true;
+}
+function ladderSpot(el) {
+  const b = box(el);
+  for (const f of [.5, .3, .7, .2, .8].sort(() => Math.random() - .5)) { const cx = Math.max(140, Math.min(1420, b.x + b.w * f)); if (clearUnder(el, cx)) return cx; }
+  return null;
+}
+/* ladder: raised from the floor, climbed step by step */
+async function ladderUp(a, cx, topY) {
+  const H = Math.max(90, Math.min(520, GY - topY));
+  const l = document.createElement('div'); l.className = 'prop ladder'; l.style.cssText = `height:${H}px;transform:translate(${cx - 18}px,${GY - H}px)`;
+  crewF.insertBefore(l, crewF.firstChild); run.clips.push(l);
+  l.animate([{transform: `translate(${cx - 18}px,${GY - H}px) scaleY(0)`, transformOrigin: '50% 100%'}, {transform: `translate(${cx - 18}px,${GY - H}px) scaleY(1)`, transformOrigin: '50% 100%'}], {duration: 600, easing: 'ease-out'});
+  await wait(650);
+  a.flip(false);
+  const steps = Math.round((H - 20) / 14);
+  for (let i = 1; i <= steps; i++) { a.at(a.x, GY - a.h - i * 14).f(i % 2 ? FR.wave0 : FR.wave1); await wait(170); }
+  return {l, H, steps};
+}
+async function ladderDown(a, lad, cx) {
+  for (let i = lad.steps - 1; i >= 0; i--) { a.at(a.x, GY - a.h - i * 14).f(i % 2 ? FR.wave0 : FR.wave1); await wait(130); }
+  a.f(FR.idle);
+  lad.l.animate([{opacity: 1}, {opacity: 0}], {duration: 400, fill: 'forwards'});
+}
 async function screenFall(who, el) {
-  const b = box(el), a = actor(who, crewF).show(0), cx = Math.max(140, Math.min(1420, b.x + b.w / 2));
+  const b = box(el), a = actor(who, crewF).show(0), spot = ladderSpot(el), cx = spot ?? Math.max(140, Math.min(1420, b.x + b.w / 2));
   el.style.transformOrigin = Math.random() < .5 ? '0 0' : '100% 0';
   const ang = (el.style.transformOrigin === '0 0' ? 1 : -1) * (3 + Math.random() * 3);
   const down = el.animate([{transform: 'none'}, {transform: `rotate(${ang * 1.6}deg) translateY(34px)`, offset: .55}, {transform: `rotate(${ang * .8}deg) translateY(20px)`, offset: .8}, {transform: `rotate(${ang}deg) translateY(24px)`}], {duration: 1000, easing: 'ease-out', fill: 'forwards'});
   run.anims.push(down);
-  await wait(900);
-  const fromL = cx > 800;
+  await wait(1200);
+  const fromL = cx < 800;
   a.at(fromL ? 96 - a.w / 2 : 1504 - a.w / 2, GY - a.h).f(FR.side); await wait(40); a.show(1);
-  await walkTo(a, cx - a.w / 2, 60);
+  await walkTo(a, cx - a.w / 2, 70);
   a.flip(false).f(FR.lookL); await say(cx, a.y - 8, pick(SAYS.fix), 1100);
-  for (let q = 0; q < 6; q++) { a.f(q % 2 ? FR.wave1 : FR.wave0); await wait(220); }
-  const up = el.animate([{transform: `rotate(${ang}deg) translateY(24px)`}, {transform: 'translateY(-6px)', offset: .7}, {transform: 'none'}], {duration: 700, easing: 'ease-out', fill: 'forwards'});
-  run.anims.push(up); await wait(720); down.cancel(); up.cancel();
+  const high = spot != null && GY - (b.y + b.h + 24) > 110;
+  let lad = null;
+  if (high) lad = await ladderUp(a, cx, b.y + b.h + 24 + a.h * .35);
+  for (let q = 0; q < 6; q++) { a.f(q % 2 ? FR.wave1 : FR.wave0); await wait(240); }
+  const up = el.animate([{transform: `rotate(${ang}deg) translateY(24px)`}, {transform: 'translateY(-6px)', offset: .7}, {transform: 'none'}], {duration: 800, easing: 'ease-out', fill: 'forwards'});
+  run.anims.push(up); await wait(820); down.cancel(); up.cancel();
   a.f(FR.idle); await say(cx, a.y - 8, pick(SAYS.done), 1200);
-  await walkTo(a, fromL ? 1504 - a.w / 2 : 96 - a.w / 2, 40); a.show(0);
+  if (lad) await ladderDown(a, lad, cx);
+  await wait(300);
+  await walkTo(a, fromL ? 96 - a.w / 2 : 1504 - a.w / 2, 60); a.show(0);
+}
+/* climbs a ladder to check something on the sheet */
+async function ladderCheck(who, el) {
+  const spot = ladderSpot(el); if (spot == null) return charFall(who, 300 + Math.random() * 900);
+  const b = box(el), a = actor(who, crewF).show(0), cx = spot;
+  const fromL = cx < 800;
+  a.at(fromL ? 96 - a.w / 2 : 1504 - a.w / 2, GY - a.h).f(FR.side); await wait(40); a.show(1);
+  await walkTo(a, cx - a.w / 2, 70);
+  const lad = await ladderUp(a, cx, b.y + b.h + 10 + a.h * .35);
+  for (let q = 0; q < 12; q++) { a.f(q % 2 ? FR.type1 : FR.type0); await wait(170); }
+  a.f(FR.idle); await say(cx, a.y - 8, pick(['Conferido', 'Tudo certo aqui', 'Cabo firme', 'Ok, up/up']), 1300);
+  await ladderDown(a, lad, cx);
+  await wait(300);
+  await walkTo(a, fromL ? 96 - a.w / 2 : 1504 - a.w / 2, 60); a.show(0);
 }
 /* someone drops in from above */
 async function charFall(who, x) {
@@ -1131,7 +1183,7 @@ async function fixIP(who, el) {
   const wrong = orig.replace(/\d+(?!.*\d)/, d => String((+d + 7 + Math.floor(Math.random() * 90)) % 250));
   run.restores.push(() => { el.textContent = orig; el.style.color = ''; });
   el.textContent = wrong; el.style.color = '#ff7a7a'; el.style.transition = 'color .4s';
-  const a = actor(who, crewF).show(0), fromL = cx > 800;
+  const a = actor(who, crewF).show(0), fromL = cx < 800;
   a.at(fromL ? 96 - a.w / 2 : 1504 - a.w / 2, GY - a.h).f(FR.side); await wait(40); a.show(1);
   await walkTo(a, cx - a.w / 2, 70);
   a.flip(cx < 800).f(FR.point); await say(cx, a.y - 8, pick(SAYS.ip), 1200);
@@ -1159,6 +1211,8 @@ function plan(id) {
     ['peekUp', 1, w => peekUp(w[0], gx())],
   ];
   if (falls.length) pool.push(['screen', 1, w => screenFall(w[0], pick(falls))], ['screen', 1, w => screenFall(w[0], pick(falls))]);
+  const high = falls.filter(el => { const r = box(el); return GY - (r.y + r.h) > 140 && ladderSpot(el) != null; });
+  if (high.length) pool.push(['ladder', 1, w => ladderCheck(w[0], pick(high))], ['ladder', 1, w => ladderCheck(w[0], pick(high))]);
   if (ips.length) pool.push(['ip', 1, w => fixIP(w[0], pick(ips))], ['ip', 1, w => fixIP(w[0], pick(ips))]);
   if (sp.peek.length) pool.push(['peek', 1, w => { const el = $(pick(sp.peek)); return el ? peekOver(w[0], el, .15 + Math.random() * .7) : Promise.resolve(); }]);
   const acts = [];
@@ -1166,10 +1220,10 @@ function plan(id) {
   const used = new Set();
   pool.sort(() => Math.random() - .5);
   for (const [k, n, f] of pool) {
-    if (used.has(k) || ppl.length < n || acts.length >= 4) continue;
+    if (used.has(k) || ppl.length < n || acts.length >= 3) continue;
     used.add(k);
     const w = ppl.splice(0, n);
-    acts.push([acts.length < 2 ? 200 + Math.random() * 900 : 2500 + Math.random() * 4500, () => f(w)]);
+    acts.push([[600 + Math.random() * 900, 4000 + Math.random() * 3000, 9000 + Math.random() * 4000][acts.length], () => f(w)]);
   }
   return acts.map(([d, f]) => () => wait(d).then(f));
 }
