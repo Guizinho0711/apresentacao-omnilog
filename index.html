@@ -37,6 +37,10 @@ img{max-width:100%;display:block}
 .prop.bottle{width:14px;height:40px;border-radius:5px 5px 4px 4px;background:linear-gradient(90deg,#1f5c3a,#2f8a57 45%,#1a4a2f);border:1px solid #0c2617}
 .prop.bottle::before{content:"";position:absolute;left:3px;top:-10px;width:6px;height:12px;background:#d8b04a;border-radius:2px 2px 0 0}
 .prop.ladder{width:36px;border-left:4px solid #b9a27c;border-right:4px solid #b9a27c;background:repeating-linear-gradient(transparent 0 11px,#cdb68e 11px 15px);transform-origin:50% 100%}
+.prop.lap{width:30px;height:18px;transform-origin:50% 100%}
+.prop.lap::before{content:"";position:absolute;left:2px;right:2px;bottom:4px;height:3px;background:#c5c9cf;transform-origin:50% 100%;transform:scaleY(1);transition:height .3s}
+.prop.lap.open::before{height:14px;background:linear-gradient(#9fc0f0,#c5c9cf)}
+.prop.lap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:#8d9198;border-radius:1px}
 .prop.cork{width:7px;height:8px;border-radius:2px;background:#e3c99a}
 #fx{position:absolute;inset:0;pointer-events:none}
 
@@ -1097,6 +1101,34 @@ const SAYS = {
 };
 const vis = el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
 /* a piece of the sheet comes loose and someone puts it back */
+/* pulls a notebook out of the backpack, opens it and types the fix */
+async function laptopOut(a) {
+  a.flip(false).f(FR.crouch); await wait(320);
+  const lp = document.createElement('div'); lp.className = 'prop lap';
+  lp.style.transform = `translate(${a.x + a.w / 2 - 15}px,${a.y + a.h * .5}px)`; crewF.append(lp); run.clips.push(lp);
+  const o = lp.animate([{transform: `translate(${a.x + a.w / 2 - 15}px,${a.y + a.h * .62}px) scale(.3)`, opacity: 0}, {transform: `translate(${a.x + a.w / 2 - 15}px,${a.y + a.h * .42}px) scale(1)`, opacity: 1}], {duration: 450, easing: 'ease-out', fill: 'forwards'});
+  run.anims.push(o); await wait(480);
+  lp.classList.add('open'); await wait(300);
+  lp.remove(); a.f(FR.type0);
+}
+async function laptopType(a, lines, prompt = '(config)# ', onLine) {
+  const bub = document.createElement('div'); bub.className = 'bub';
+  bub.style.cssText = `bottom:auto;left:${a.x + a.w / 2}px;top:${a.y - 12}px;transform:translate(-50%,-100%)`;
+  crewF.append(bub); run.clips.push(bub);
+  let k = 0; const tap = setInterval(() => a.f((k ^= 1) ? FR.type1 : FR.type0), 150); run.timers.push(tap);
+  const done = [];
+  for (const [n, ln] of lines.entries()) {
+    for (let i = 0; i <= ln.length; i++) {
+      const fmt = (l, c) => l.startsWith('!') ? `<i>${esc(l.slice(0, c))}</i>` : `<b>${esc(prompt)}</b>${esc(l.slice(0, c))}`;
+      bub.innerHTML = done.map(l => fmt(l, l.length)).concat(fmt(ln, i) + '<span class="cur"></span>').join('\n');
+      await wait(40 + Math.random() * 40);
+    }
+    done.push(ln); if (onLine) await onLine(n); await wait(350);
+  }
+  clearInterval(tap); await wait(400);
+  bub.style.transition = 'opacity .3s'; bub.style.opacity = 0;
+  a.f(FR.crouch); await wait(250); a.f(FR.idle);
+}
 /* is the floor under this point of an element free (no other content, no desk)? */
 function clearUnder(el, cx) {
   const sr = stage.getBoundingClientRect(), b = box(el);
@@ -1143,7 +1175,8 @@ async function screenFall(who, el) {
   const high = spot != null && GY - (b.y + b.h + 24) > 110;
   let lad = null;
   if (high) lad = await ladderUp(a, cx, b.y + b.h + 24 + a.h * .35);
-  for (let q = 0; q < 6; q++) { a.f(q % 2 ? FR.wave1 : FR.wave0); await wait(240); }
+  if (lad) { a.f(FR.type0); } else await laptopOut(a);
+  await laptopType(a, pick([['! card fora do lugar', 'reload position', 'no shutdown'], ['! reposicionando', 'align top', 'write memory'], ['! conferindo o painel', 'no shutdown']]), 'R-MATRIZ# ');
   const up = el.animate([{transform: `rotate(${ang}deg) translateY(24px)`}, {transform: 'translateY(-6px)', offset: .7}, {transform: 'none'}], {duration: 800, easing: 'ease-out', fill: 'forwards'});
   run.anims.push(up); await wait(820); down.cancel(); up.cancel();
   a.f(FR.idle); await say(cx, a.y - 8, pick(SAYS.done), 1200);
@@ -1180,16 +1213,22 @@ async function charFall(who, x) {
 /* an address shows up wrong and gets retyped */
 async function fixIP(who, el) {
   const orig = el.textContent, b = box(el), cx = Math.max(140, Math.min(1420, b.x + b.w / 2));
-  const wrong = orig.replace(/\d+(?!.*\d)/, d => String((+d + 7 + Math.floor(Math.random() * 90)) % 250));
+  const bump = d => String((+d + 7 + Math.floor(Math.random() * 90)) % 250);
+  const wrong = /\//.test(orig) ? orig.replace(/\d+(?=\/)/, bump) : orig.replace(/\d+(?!.*\d)/, bump);
   run.restores.push(() => { el.textContent = orig; el.style.color = ''; });
   el.textContent = wrong; el.style.color = '#ff7a7a'; el.style.transition = 'color .4s';
   const a = actor(who, crewF).show(0), fromL = cx < 800;
   a.at(fromL ? 96 - a.w / 2 : 1504 - a.w / 2, GY - a.h).f(FR.side); await wait(40); a.show(1);
   await walkTo(a, cx - a.w / 2, 70);
-  a.flip(cx < 800).f(FR.point); await say(cx, a.y - 8, pick(SAYS.ip), 1200);
-  for (let i = wrong.length; i >= 0; i--) { el.textContent = wrong.slice(0, i); await wait(35); }
-  el.style.color = 'var(--ok)';
-  for (let i = 1; i <= orig.length; i++) { el.textContent = orig.slice(0, i); await wait(70); }
+  a.flip(cx < 800).f(FR.point); await say(cx, a.y - 8, pick(SAYS.ip), 1100);
+  await laptopOut(a);
+  const ipLine = /\//.test(orig) ? `network ${orig.replace(/\/\d+$/, '')}` : `ip address ${orig}`;
+  await laptopType(a, ['! endereço trocado', ipLine], '(config-if)# ', async n => {
+    if (n !== 1) return;
+    for (let i = wrong.length; i >= 0; i--) { el.textContent = wrong.slice(0, i); await wait(30); }
+    el.style.color = 'var(--ok)';
+    for (let i = 1; i <= orig.length; i++) { el.textContent = orig.slice(0, i); await wait(55); }
+  });
   a.flip(false).f(FR.idle); await say(cx, a.y - 8, pick(SAYS.done), 1200);
   await wait(500); el.style.color = '';
   await walkTo(a, fromL ? 96 - a.w / 2 : 1504 - a.w / 2, 40); a.show(0);
