@@ -320,11 +320,7 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
 .stack .m .ph{width:min(150px,38vw);height:min(150px,38vw)}
 .stack .m h3{font-size:24px!important;margin-top:20px}
 .stack .m .pxw{transform:scale(.8);transform-origin:50% 100%}
-@media (prefers-reduced-motion:reduce){
-  .slide,[data-a],tbody tr,#rings i,#foot .gr i,.vbar .b span{transition:none!important}
-  .slide.on .m>*,.slide.on .m .pxw,.truck,.roll,.scene .wan,.link::before{animation:none!important}
-  .on .code .l{animation:none;width:auto}
-}
+
 </style>
 </head>
 <body>
@@ -765,7 +761,7 @@ const PXS = {caio:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAACdgAAAEYCAYAAAB
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const root = document.documentElement, stage = $('#stage'), slides = $$('.slide'), N = slides.length;
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce = false;
 let cur = -1, scale = 1, stack = false;
 
 slides.forEach(s => {
@@ -855,7 +851,7 @@ function counters(s) {
 
 function fit() {
   const vw = innerWidth, vh = innerHeight;
-  stack = vw < 720 || vw / vh < .95;
+  stack = vw < 720 || vw / vh < .75;
   root.classList.toggle('stack', stack);
   if (stack) { stage.style.transform = ''; return; }
   scale = Math.min(vw / 1600, vh / 900);
