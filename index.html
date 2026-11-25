@@ -94,6 +94,16 @@ td.ip,.ip{font-family:var(--mono)}
 tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) * 60ms + 350ms)}
 .slide:not(.on) tbody tr{opacity:0;transform:translateX(-10px)}
 .scroll{overflow-x:auto}
+#custos .grid{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:40px}
+#custos td{padding:7px 12px;font-size:17px}#custos th{padding:0 12px 9px}
+#custos td.n,#custos th.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+#custos tfoot td{font-weight:600;border-bottom:0;padding-top:12px;font-size:19px}
+#custos .tot{font:400 64px/1 var(--serif);letter-spacing:-.02em;margin:6px 0 4px}
+#custos .card h3{font:600 15px var(--sans);color:var(--ink3);margin-bottom:4px}
+#custos .card p{font-size:16px;color:var(--ink2)}
+#custos .card li{font-size:17px;padding:9px 0}#custos .card li b{float:right;font-family:var(--mono);font-weight:500}
+#custos .src{font-size:13px;color:var(--ink3);margin-top:10px;line-height:1.45}
+
 .ok{color:var(--ok)}
 .tag{display:inline-block;align-self:flex-start;font:500 14px var(--sans);padding:3px 10px;border-radius:99px;border:1px solid currentColor}
 #capa{flex-direction:row;align-items:center;gap:40px;padding-top:40px}
@@ -402,8 +412,8 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
       <div class="stops">
         <div class="stop"><i></i><h3>O cliente</h3><p>Quem é a OmniLog Hubs e por que a rede precisa mudar.</p><span class="range">slides 3 e 4</span></div>
         <div class="stop"><i></i><h3>Projeto da rede</h3><p>Etapas, setores e VLANs, servidores, VLSM e equipamentos.</p><span class="range">slides 5 a 9</span></div>
-        <div class="stop"><i></i><h3>Implementação</h3><p>Topologia, configuração, roteamento e testes no Packet Tracer.</p><span class="range">slides 10 a 16</span></div>
-        <div class="stop"><i></i><h3>Fechamento</h3><p>Riscos, conclusão, próximos passos e a equipe.</p><span class="range">slides 17 a 20</span></div>
+        <div class="stop"><i></i><h3>Implementação</h3><p>Topologia, configuração, testes no Packet Tracer e custos.</p><span class="range">slides 10 a 17</span></div>
+        <div class="stop"><i></i><h3>Fechamento</h3><p>Riscos, conclusão, próximos passos e a equipe.</p><span class="range">slides 18 a 21</span></div>
       </div>
     </div>
     <aside class="note">A apresentação tem quatro partes: o cliente e o problema, o projeto da rede, a implementação no Packet Tracer com as evidências e o fechamento com riscos, conclusão e a equipe.</aside>
@@ -691,6 +701,31 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
       </figure>
     </div>
     <aside class="note">Estes são os prints reais dos testes. À esquerda, o PC-ADM-1 alcança o servidor e o PC-OPE-1. À direita, o PC-GALPAO-1 alcança o servidor da Matriz pela WAN, com 4 de 4 respostas na segunda rodada.</aside>
+  </section>
+
+  <section class="slide" id="custos" data-sec="Implementação" aria-label="Quanto custa montar a rede">
+    <p class="kick" data-a>Orçamento estimado</p>
+    <h2 data-a>Quanto custa montar a rede de verdade</h2>
+    <div class="grid">
+      <div class="scroll" data-a><table>
+        <thead><tr><th>Item</th><th class="n">Qtd.</th><th class="n">Unit. (R$)</th><th class="n">Total (R$)</th></tr></thead>
+        <tbody><tr><td>Roteadores Cisco 2911 (recertificados)</td><td class="n">2</td><td class="n">580</td><td class="n">1.160</td></tr><tr><td>Switches Cisco Catalyst 2960-X (seminovos)</td><td class="n">3</td><td class="n">1.400</td><td class="n">4.200</td></tr><tr><td>Servidores torre Dell PowerEdge (7 serviços virtualizados)</td><td class="n">2</td><td class="n">10.000</td><td class="n">20.000</td></tr><tr><td>Estações Dell OptiPlex i5, 16 GB (seminovas)</td><td class="n">6</td><td class="n">3.400</td><td class="n">20.400</td></tr><tr><td>Access point Ubiquiti UniFi U6+ (Wi-Fi 6)</td><td class="n">1</td><td class="n">925</td><td class="n">925</td></tr><tr><td>Câmera IP Intelbras VIP 1230 (PoE)</td><td class="n">1</td><td class="n">380</td><td class="n">380</td></tr><tr><td>Cabo Cat6 Furukawa 305 m + conectores e patch cords</td><td class="n">2</td><td class="n">1.500</td><td class="n">3.000</td></tr><tr><td>Mini rack de parede 12U (Matriz e Filial)</td><td class="n">2</td><td class="n">800</td><td class="n">1.600</td></tr><tr><td>Nobreak senoidal 1200 VA rack</td><td class="n">2</td><td class="n">2.100</td><td class="n">4.200</td></tr><tr><td>Instalação e certificação (10%)</td><td class="n">1</td><td class="n">5.586</td><td class="n">5.586</td></tr></tbody>
+        <tfoot><tr><td>Investimento inicial (CAPEX)</td><td></td><td></td><td class="n">61.451</td></tr></tfoot>
+      </table></div>
+      <div class="card" id="custoCard" data-a>
+        <h3>Total para montar Matriz e Filial</h3>
+        <div class="tot">R$ 61 mil</div>
+        <p>Cenário enxuto: equipamentos Cisco seminovos, iguais aos do Packet Tracer.</p>
+        <ul class="rows">
+          <li>Internet empresarial, 2 sites <b>~R$ 400/mês</b></li>
+          <li>Backup 4G/5G da WAN <b>~R$ 100/mês</b></li>
+          <li>Link dedicado Matriz–Filial <b>sob cotação</b></li>
+          <li>Switches Cisco novos (2960L) <b>R$ 125 mil</b></li>
+        </ul>
+        <p class="src">Preços pesquisados em nov/2026 (Net Computadores, KaBuM!, Magalu, OLX, Dell). Servidores, instalação e mensalidades são estimativas; valores variam com fornecedor e frete.</p>
+      </div>
+    </div>
+    <aside class="note">Fizemos um levantamento de quanto custaria montar essa rede no mundo real. Com equipamentos Cisco seminovos, os mesmos modelos do Packet Tracer, o investimento fica em torno de 61 mil reais. Os maiores custos são os dois servidores, que rodam os sete serviços virtualizados, e as seis estações. Se a empresa preferir switches Cisco novos, o total passa de 125 mil. Por mês, entram a internet dos dois sites, o backup 4G e o link dedicado entre Matriz e Filial, que as operadoras passam sob cotação.</aside>
   </section>
 
   <section class="slide" id="riscos" data-sec="Fechamento" aria-label="Segurança e continuidade">
@@ -1068,7 +1103,7 @@ const CMDS = {
   switches: ['vlan 30', 'name SERVIDORES', 'vlan 40', 'name VISITANTES'], routers: ['interface Gi0/0.20', 'encapsulation dot1Q 20'],
   plano: ['ping 172.16.1.66', 'ping 172.16.0.194'], referencias: ['! referências conferidas', 'exit'], vlans: ['show vlan brief'],
   cliente: ['show ip interface brief'], riscos: ['spanning-tree mode pvst'], conclusao: ['ip helper-address 172.16.1.71'],
-  vlsm: ['! /25 /26 /26 /27 /27 /28 /30'], topologia: ['show cdp neighbors'], roteamento: ['show ip route static'], pacote: ['ping 172.16.1.66'], testes: ['ping 172.16.1.66 -n 4'],
+  vlsm: ['! /25 /26 /26 /27 /27 /28 /30'], topologia: ['show cdp neighbors'], roteamento: ['show ip route static'], pacote: ['ping 172.16.1.66'], testes: ['ping 172.16.1.66 -n 4'], custos: ['show inventory'],
 };
 const PROMPT = id => ['servidores', 'plano', 'pacote', 'testes'].includes(id) ? 'C:\\> ' : ['switches', 'routers', 'riscos', 'conclusao'].includes(id) ? '(config)# ' : 'R-MATRIZ# ';
 /* where each sheet has room: desk corners and edges to peek over */
@@ -1087,6 +1122,7 @@ const SPEC = {
   pacote: {desk: [], peek: []},
   plano: {desk: ['r', 'l'], peek: []},
   testes: {desk: [], peek: ['#galShot', '#testes .shot']},
+  custos: {desk: [], peek: ['#custoCard']},
   riscos: {desk: [], peek: []},
   conclusao: {desk: [], peek: ['#conclusao .next']},
   referencias: {desk: ['r'], peek: []},
