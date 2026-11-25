@@ -94,6 +94,12 @@ td.ip,.ip{font-family:var(--mono)}
 tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) * 60ms + 350ms)}
 .slide:not(.on) tbody tr{opacity:0;transform:translateX(-10px)}
 .scroll{overflow-x:auto}
+#compras td{padding:6px 12px;font-size:16px}#compras th{padding:0 12px 8px}
+#compras td.n,#compras th.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+#compras td:nth-child(3){color:var(--ink2)}
+#compras tr.xt td:first-child{color:#f3c97a}#compras em{font:600 11px var(--sans);font-style:normal;color:#0b0c0e;background:#e7b65e;border-radius:4px;padding:2px 6px;margin-left:6px;vertical-align:2px}
+#compras .ctot{display:flex;gap:40px;margin-top:16px;font-size:16px;color:var(--ink2)}#compras .ctot b{font:500 20px var(--mono);color:var(--ink);margin-left:8px}#compras .ctot .xt b{color:#f3c97a}
+.stack #compras .ctot{flex-direction:column;gap:6px}
 #custos .grid{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:44px}
 #custos .chart{position:relative;padding-top:24px}
 #custos .cols{display:flex;gap:10px;align-items:flex-end;height:330px;border-bottom:1px solid var(--line2)}
@@ -438,8 +444,8 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
       <div class="stops">
         <div class="stop"><i></i><h3>O cliente</h3><p>Quem é a OmniLog Hubs e por que a rede precisa mudar.</p><span class="range">slides 3 e 4</span></div>
         <div class="stop"><i></i><h3>Projeto da rede</h3><p>Etapas, setores e VLANs, servidores, VLSM e equipamentos.</p><span class="range">slides 5 a 9</span></div>
-        <div class="stop"><i></i><h3>Implementação</h3><p>Topologia, configuração, testes no Packet Tracer e custos.</p><span class="range">slides 10 a 17</span></div>
-        <div class="stop"><i></i><h3>Fechamento</h3><p>Riscos, conclusão, próximos passos e a equipe.</p><span class="range">slides 18 a 21</span></div>
+        <div class="stop"><i></i><h3>Implementação</h3><p>Topologia, configuração, testes no Packet Tracer e custos.</p><span class="range">slides 10 a 18</span></div>
+        <div class="stop"><i></i><h3>Fechamento</h3><p>Riscos, conclusão, próximos passos e a equipe.</p><span class="range">slides 19 a 22</span></div>
       </div>
     </div>
     <aside class="note">A apresentação tem quatro partes: o cliente e o problema, o projeto da rede, a implementação no Packet Tracer com as evidências e o fechamento com riscos, conclusão e a equipe.</aside>
@@ -750,6 +756,17 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
       </div>
     </div>
     <aside class="note">Fizemos um levantamento de quanto custaria montar essa rede no mundo real, em dois cenários. Só a rede, com equipamentos Cisco seminovos iguais aos do Packet Tracer, sai por volta de 61 mil reais; os maiores custos são os dois servidores e as seis estações. A estrutura completa soma o que a empresa precisa para operar de verdade: licenças do Windows Server, um firewall em cada site e os discos para gravar as câmeras, e chega a cerca de 76 mil. Por mês entram a internet, o backup 4G, o Microsoft 365 e o link dedicado, que as operadoras passam sob cotação.</aside>
+  </section>
+
+  <section class="slide" id="compras" data-sec="Implementação" aria-label="Lista de compras">
+    <p class="kick" data-a>Lista de compras</p>
+    <h2 data-a>Tudo o que foi orçado, item por item</h2>
+    <div class="scroll" data-a><table>
+      <thead><tr><th>Item</th><th class="n">Qtd.</th><th>Para que serve</th><th class="n">Total (R$)</th></tr></thead>
+      <tbody><tr><td>Roteador Cisco 2911 (recertificado)</td><td class="n">2</td><td>Matriz e Filial: VLANs e WAN</td><td class="n">1.160</td></tr><tr><td>Switch Cisco Catalyst 2960-X (seminovo)</td><td class="n">3</td><td>2 na Matriz, 1 na Filial</td><td class="n">4.200</td></tr><tr><td>Servidor Dell PowerEdge</td><td class="n">2</td><td>rodam os 7 servidores virtualizados</td><td class="n">20.000</td></tr><tr><td>Computador Dell OptiPlex i5, 16 GB</td><td class="n">6</td><td>estações dos setores</td><td class="n">20.400</td></tr><tr><td>Access point Ubiquiti U6+ (Wi-Fi 6)</td><td class="n">1</td><td>Wi-Fi dos visitantes</td><td class="n">925</td></tr><tr><td>Câmera IP Intelbras VIP 1230</td><td class="n">1</td><td>câmera do Galpão (IoT)</td><td class="n">380</td></tr><tr><td>Cabo Cat6 Furukawa 305 m + conectores e patch cords</td><td class="n">2 cx</td><td>toda a ligação física</td><td class="n">3.000</td></tr><tr><td>Rack de parede 12U</td><td class="n">2</td><td>organiza os equipamentos em cada site</td><td class="n">1.600</td></tr><tr><td>Nobreak senoidal 1200 VA</td><td class="n">2</td><td>mantém a rede ligada se faltar energia</td><td class="n">4.200</td></tr><tr class="xt"><td>Licença Windows Server 2025 <em>completa</em></td><td class="n">2</td><td>sistema dos servidores</td><td class="n">5.520</td></tr><tr class="xt"><td>Firewall Fortinet FortiGate 40F <em>completa</em></td><td class="n">2</td><td>proteção da internet em cada site</td><td class="n">4.852</td></tr><tr class="xt"><td>HD WD Purple 4 TB <em>completa</em></td><td class="n">2</td><td>gravação das câmeras</td><td class="n">3.000</td></tr><tr><td>Instalação e certificação (10%)</td><td class="n">–</td><td>mão de obra</td><td class="n">5.586 / 6.924</td></tr></tbody>
+    </table></div>
+    <div class="ctot" data-a><span>Só a rede <b>R$ 61.451</b></span><span class="xt">Estrutura completa <b>R$ 76.161</b></span><span>Mensal <b>~R$ 700 + cotações</b></span></div>
+    <aside class="note">Aqui está tudo o que foi orçado. A parte de rede: roteadores, switches, Wi-Fi e câmera. Os servidores e computadores. E a parte física: cabo Cat6, rack e nobreak, que mantém tudo ligado se faltar energia. Os itens marcados como completa são as licenças, os firewalls e os discos das câmeras. Só a rede sai por cerca de 61 mil reais; a estrutura completa, por cerca de 76 mil.</aside>
   </section>
 
   <section class="slide" id="riscos" data-sec="Fechamento" aria-label="Segurança e continuidade">
@@ -1146,6 +1163,7 @@ const SPEC = {
   pacote: {desk: [], peek: []},
   plano: {desk: ['r', 'l'], peek: []},
   testes: {desk: [], peek: ['#galShot', '#testes .shot']},
+  compras: {desk: [], peek: []},
   riscos: {desk: [], peek: []},
   conclusao: {desk: [], peek: ['#conclusao .next']},
   referencias: {desk: ['r'], peek: []},
