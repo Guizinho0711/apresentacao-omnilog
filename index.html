@@ -157,7 +157,7 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
 .steps3 ul{padding-left:20px;font-size:18px;color:var(--ink2);display:grid;gap:6px;margin:0}
 .steps3 .bar{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--acc);transition:width 1.4s cubic-bezier(.65,0,.35,1) .8s}
 .on .steps3 .bar.full{width:100%}
-.on .steps3 .bar.half{width:12%}
+.on .steps3 .bar.half{width:85%}
 #vlans td{padding-top:15px;padding-bottom:15px}
 #vlans .foot{margin-top:20px;font-size:18px;color:var(--ink3);max-width:1300px}
 .srv{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
@@ -449,9 +449,9 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
     <div class="steps3">
       <div class="card" data-a><span class="tag ok">Concluída</span><h3>Etapa 1, planejamento</h3><p>Plano de negócios e desenho lógico da rede.</p><ul><li>Levantamento dos setores e da demanda</li><li>Segmentação em VLANs e VLSM</li><li>Política de segurança e continuidade</li></ul><i class="bar full"></i></div>
       <div class="card" data-a><span class="tag ok">Concluída</span><h3>Etapa 2, implementação</h3><p>Rede montada e testada no Cisco Packet Tracer.</p><ul><li>Switches, roteadores e servidores</li><li>Router-on-a-stick e rotas estáticas</li><li>Evidências e testes de ping</li></ul><i class="bar full"></i></div>
-      <div class="card" data-a><span class="tag" style="color:var(--acc)">Próxima</span><h3>Etapa 3, cotação</h3><p>Custos para levar o projeto ao mundo real.</p><ul><li>Links de internet e WAN</li><li>Equipamentos e licenças</li><li>Comparação de fornecedores</li></ul><i class="bar half"></i></div>
+      <div class="card" data-a><span class="tag" style="color:var(--acc)">Hoje</span><h3>Etapa 3, finalização</h3><p>Entrega do documento final e apresentação.</p><ul><li>Documento entregável 3</li><li>Apresentação do projeto à turma</li><li>Evidências da rede funcionando</li></ul><i class="bar half"></i></div>
     </div>
-    <aside class="note">O projeto foi dividido em três etapas. Na primeira planejamos o negócio e a rede. Na segunda montamos e testamos tudo no Packet Tracer, que é o foco desta apresentação. A terceira será a cotação dos equipamentos e links.</aside>
+    <aside class="note">O projeto foi dividido em três etapas. Na primeira planejamos o negócio e a rede. Na segunda montamos e testamos tudo no Packet Tracer, que é o foco desta apresentação. A terceira é a finalização: a entrega do documento entregável 3 e esta apresentação.</aside>
   </section>
 
   <section class="slide" id="vlans" data-sec="Projeto da rede" aria-label="Setores e VLANs">
@@ -717,11 +717,11 @@ tbody tr{transition:opacity .5s,transform .5s;transition-delay:calc(var(--r,0) *
         <ul class="rows">
           <li>Ativar o DHCP centralizado<span>Os roteadores já têm ip helper-address 172.16.1.71; hoje os PCs usam IP fixo.</span></li>
           <li>ACLs da política entre VLANs<span>Definidas na Etapa 1 e previstas como evolução.</span></li>
-          <li>Etapa 3<span>Cotação de links, equipamentos e fornecedores.</span></li>
+          <li>Etapa 3, finalização<span>Entrega do documento entregável 3 e apresentação do projeto.</span></li>
         </ul>
       </div>
     </div>
-    <aside class="note">Concluindo: a rede atende aos requisitos da Etapa 2 e está pronta para embasar a Etapa 3. Os próximos passos são ativar o DHCP centralizado, que já está preparado nos roteadores, implementar as ACLs e fazer a cotação.</aside>
+    <aside class="note">Concluindo: a rede atende aos requisitos da Etapa 2 e está pronta para embasar a Etapa 3. Os próximos passos são ativar o DHCP centralizado, que já está preparado nos roteadores, implementar as ACLs, e hoje fechamos a Etapa 3 com o documento final e esta apresentação.</aside>
   </section>
 
   <section class="slide" id="referencias" data-sec="Fechamento" aria-label="Referências">
@@ -1220,7 +1220,6 @@ async function celebrate() {
   for (;;) { await wait(5200); burst(cv, cx + (Math.random() - .5) * 700, 480, 110); await say(cx + (Math.random() - .5) * 300, hb.y - 14, pick(['Valeu, professora!', 'Etapa 2 feita!', 'Perguntas?', 'Rede no ar!']), 1500); }
 }
 const CAMEOS = {
-  equipe: celebrate,
   async capa() {
     await wait(1000);
     const g = box($('#capa .scene')), k = g.w / 680, gy = g.y + 520 * k;
